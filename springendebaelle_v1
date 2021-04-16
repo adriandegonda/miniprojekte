@@ -1,0 +1,46 @@
+//Einzelner springender Ball
+
+float erdanziehung = 1.6;
+float sprungkraft = 40;
+float posY = 30;
+float speedY = 0;
+int max_spruenge = 3;
+int sprung = 3;
+
+void setup() {
+  size(1000, 1000);
+}
+
+void draw() {
+  background(170);
+  speedY += erdanziehung;
+
+  if (posY < height - 50) { //In der Luft
+    if (posY + speedY > height - 50) { //Testen, ob der Ball zu weit nach unten fliegen würde
+      posY = height -50;
+    } else {
+      posY = posY + speedY;
+    }
+  } else if (speedY < 0) { //Am Boden aber Sprung ausgelöst
+    posY = posY + speedY;
+  } else { //Am Boden. Kein Sprung
+    posY = height - 50;
+    speedY = 0;
+    sprung = 0;
+  }
+  ellipse(width/2, posY, 50, 50);
+
+  fill(0);
+  text("Zum Springen Leertaste drücken", 10, 15*1);
+  fill(255);
+  text("posY: "+posY, 10, 15*2);
+  text("speedY: "+speedY, 10, 15*3);
+  text("Sprung "+sprung+" von "+max_spruenge, 10, 15*4);
+}
+
+void keyPressed() {
+  if ((key == 'c' || key == 'C' || key == ' ') && sprung < max_spruenge) {
+    speedY = sprungkraft * -1;
+    sprung += 1;
+  }
+}

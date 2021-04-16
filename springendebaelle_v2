@@ -1,0 +1,102 @@
+int anzahl_baelle = 10; //Empfohlen ca. 10
+
+
+Ball[] baelle = new Ball[anzahl_baelle];
+
+float erdanziehung = 1.6;
+
+
+void setup() {
+  size(1000, 1000);
+  for (int i = 0; i<baelle.length; i++) {
+    baelle[i] = new Ball(i, baelle.length);
+  }
+}
+
+void draw() {
+  background(170);
+
+  for (int i = 0; i<baelle.length; i++) {
+    baelle[i].update();
+  }
+
+  fill(0);
+  textAlign(LEFT);
+  text("Zum Springen Leertaste drücken", 10, 15*1);
+  fill(255);
+  //text("posY: "+posY, 10, 15*2);
+  //text("speedY: "+speedY, 10, 15*3);
+  //text("Sprung "+sprung+" von "+max_spruenge, 10, 15*4);
+}
+
+void keyPressed() {
+  if (key == 'c' || key == 'C' || key == ' ') {
+  for (int i = 0; i<baelle.length; i++) {
+    baelle[i].sprung();
+  }
+  }
+}
+
+
+
+
+class Ball {
+
+  float sprungkraft;
+  float posY;
+  float speedY;
+  float posX;
+  int max_spruenge;
+  int sprung;
+
+  Ball(int _posX, int _max_posX) { // Il constructor
+
+    sprungkraft = (int)random(30, 50);
+    posY = 30;
+    speedY = 0;
+    max_spruenge = 3;
+    sprung = 3;
+    posX = (width/(_max_posX+1))*(_posX+1); //Bälle auf die Breite ohne Ränder verteilen
+  }
+
+  void update() {
+    berechnen();
+    anzeigen();
+  }
+
+  void anzeigen() {
+    fill(255);
+    ellipse(posX, posY, 50, 50);
+    textAlign(CENTER);
+    fill(150);
+    text(sprung+"/"+max_spruenge, posX, posY+5);
+  }
+
+  void sprung() {
+    if (sprung < max_spruenge) {
+      speedY = sprungkraft * -1;
+      sprung += 1 ;
+    }
+  }
+
+  void berechnen() {
+
+    if (posY < height - 50) { //In der Luft
+      if (posY + speedY > height - 50) { //Testen, ob der Ball zu weit nach unten fliegen würde
+        posY = height -50;
+      } else { //Normaler Flug
+        posY = posY + speedY;
+        speedY += erdanziehung;
+      }
+    } else if (speedY < 0) { //Am Boden aber Sprung ausgelöst
+      posY = posY + speedY;
+    } else if (posY == height - 50 && speedY*speedY > 50) { //Am Boden mit viel Bewegung
+      speedY *= -0.3;
+    } else {
+      //Am Boden. Kein Sprung. Wenig Geschwindigkeit
+      posY = height - 50;
+      speedY = 0;
+      sprung = 0;
+    }
+  }
+}
